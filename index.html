@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Kaiven_off — Stream</title>
+<link rel="icon" href="" />
+<style>
+  /* ====== VARIABLES ====== */
+  :root{
+    --bg1: #07102a;
+    --accent: #00bfff;
+    --muted: #9fbfe6;
+    --glass: rgba(255,255,255,0.04);
+    --card: rgba(255,255,255,0.03);
+    --radius: 14px;
+    --nav-height: 72px;
+    --bg-speed: 30s;
+  }
+
+  /* ====== Reset ====== */
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family: "Poppins", Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    color:#eaf6ff;
+    background: var(--bg1);
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    overflow-x:hidden;
+  }
+
+  /* ====== Animated background ====== */
+  .bg-wrap{position:fixed; inset:0; z-index:-2; overflow:hidden;
+    background: linear-gradient(120deg, rgba(6,12,28,1) 0%, rgba(8,18,40,1) 40%, rgba(9,22,48,1) 100%);
+  }
+  .animated-gradient{
+    position:absolute; inset:-20% -20% -20% -20%;
+    background: radial-gradient(circle at 10% 20%, rgba(0,191,255,0.07), transparent 6%),
+               radial-gradient(circle at 90% 80%, rgba(0,191,255,0.05), transparent 8%),
+               linear-gradient(90deg, rgba(0,191,255,0.02), rgba(0,191,255,0.01));
+    filter: blur(30px) saturate(120%);
+    animation: drift var(--bg-speed) linear infinite;
+    transform-origin:center;
+  }
+  @keyframes drift{0%{transform:translate(0%,0%) rotate(0deg) scale(1)}50%{transform:translate(6%,-4%) rotate(4deg) scale(1.02)}100%{transform:translate(0%,0%) rotate(0deg) scale(1)}}
+  .lines{position:absolute; inset:0; z-index:-1;
+    background-image:linear-gradient(180deg, rgba(0,191,255,0.02) 0 1px, transparent 1px);
+    background-size: 3px 40px; opacity:0.9; animation: linesMove 12s linear infinite;
+    mix-blend-mode: screen; pointer-events:none;
+  }
+  @keyframes linesMove{from{background-position:0 0}to{background-position:0 160px}}
+
+  /* ====== NAVBAR ====== */
+  header{
+    position:fixed; top:0; left:0; right:0; height:var(--nav-height);
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0 26px; backdrop-filter: blur(6px);
+    background: linear-gradient(180deg, rgba(7,14,40,0.6), rgba(7,14,40,0.25));
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+    z-index:30;
+  }
+  .brand{display:flex; align-items:center; gap:12px;}
+  .logo{
+    width:46px; height:46px; border-radius:10px;
+    display:grid; place-items:center; font-weight:700;
+    background: linear-gradient(135deg, rgba(0,191,255,0.14), rgba(255,255,255,0.02));
+    box-shadow: 0 6px 18px rgba(0,191,255,0.06), inset 0 -6px 18px rgba(0,0,0,0.3);
+    color:var(--accent);
+    font-family: "Orbitron", sans-serif; letter-spacing:0.5px;
+    transform: translateZ(0);
+  }
+  nav ul{list-style:none; display:flex; gap:18px; align-items:center;}
+  nav a{
+    color:var(--muted); text-decoration:none; font-weight:600;
+    padding:10px 14px; border-radius:10px;
+    transition: transform .22s ease, box-shadow .22s ease, color .18s;
+    display:inline-block;
+  }
+  nav a:hover, nav a.active{
+    transform: translateY(-4px) scale(1.05);
+    color:var(--accent);
+    box-shadow: 0 10px 30px rgba(0,191,255,0.06);
+    text-shadow: 0 0 8px rgba(0,191,255,0.12);
+  }
+  .cta{
+    background: linear-gradient(90deg, rgba(0,191,255,0.12), rgba(0,191,255,0.06));
+    padding:8px 14px; border-radius:12px; color:var(--accent);
+    font-weight:700; display:flex; gap:10px; align-items:center;
+    transition: transform .18s;
+    box-shadow: 0 6px 20px rgba(0,191,255,0.05);
+  }
+  .cta:hover{ transform:translateY(-4px) scale(1.02) }
+
+  /* ====== HERO ====== */
+  main{ padding-top:calc(var(--nav-height) + 36px) }
+  .hero{min-height:72vh; display:flex; align-items:center; gap:36px; padding:48px 6vw;}
+  .hero-left{max-width:720px;}
+  .title{font-size: clamp(2rem, 3.8vw, 3.4rem); line-height:1.02; font-weight:800; color:#e7f9ff; text-shadow: 0 8px 40px rgba(0,191,255,0.06);}
+  .subtitle{margin-top:12px; color:var(--muted); font-size:1.05rem;}
+  .hero-actions{ margin-top:22px; display:flex; gap:14px; align-items:center; flex-wrap:wrap }
+  .btn{ padding:12px 18px; border-radius:12px; font-weight:700; cursor:pointer;
+    border:1px solid rgba(255,255,255,0.04); background:var(--glass);
+    transition: transform .18s ease, box-shadow .18s ease;
+  }
+  .btn.primary{background: linear-gradient(90deg, rgba(0,191,255,0.12), rgba(0,191,255,0.06)); color:var(--accent); box-shadow: 0 10px 30px rgba(0,191,255,0.06);}
+  .btn:hover{ transform:translateY(-6px) scale(1.03) }
+  .hero-card{width:360px; min-height:260px; border-radius:16px; padding:18px; background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); box-shadow: 0 12px 40px rgba(2,8,20,0.6); display:flex; flex-direction:column; gap:12px; align-items:flex-start;}
+  .now-live{display:flex; gap:12px; align-items:center;}
+  .live-dot{ width:12px; height:12px; border-radius:50%; background: #ff4d4d; box-shadow:0 0 12px rgba(255,77,77,0.8) }
+
+  /* ====== SECTIONS ====== */
+  section{ padding:72px 6vw; scroll-margin-top: calc(var(--nav-height) + 18px) }
+  .section-title{font-size:1.4rem; margin-bottom:18px; color:#e9f9ff; display:flex; align-items:center; gap:12px;}
+  .cards{display:grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap:18px;}
+  .card{background: var(--card); border-radius:12px; padding:16px; min-height:110px; transition: transform .18s ease, box-shadow .18s ease; border: 1px solid rgba(255,255,255,0.02);}
+  .card:hover{ transform:translateY(-8px) scale(1.02); box-shadow: 0 20px 50px rgba(0,191,255,0.06);}
+  .card h3{ font-size:1.05rem; margin-bottom:8px; color:#eaf6ff }
+  .card p{ color:var(--muted); font-size:0.95rem; line-height:1.4 }
+
+  .game-badge{display:flex; gap:12px; align-items:center; padding:10px; border-radius:10px; background: linear-gradient(90deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00)); border: 1px solid rgba(255,255,255,0.02);}
+  .game-icon{width:56px; height:56px; border-radius:10px; background:linear-gradient(180deg,#0b2440,#061227); display:grid; place-items:center; font-weight:800; color:var(--accent); box-shadow: 0 8px 26px rgba(0,191,255,0.03);}
+
+  .sponsors{ display:flex; flex-wrap:wrap; gap:14px; align-items:center }
+  .sponsor{ width:120px; height:56px; padding:10px 14px; border-radius:10px; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.02); font-weight:700; color:var(--muted); transition:transform .12s; display:flex; justify-content:center; align-items:center;}
+  .sponsor:hover{ transform:translateY(-6px); color:var(--accent) }
+
+  @media (max-width:880px){
+    nav ul{ display:none }
+    header{ padding:0 14px }
+    .hero{ flex-direction:column; padding:28px 6vw; gap:18px }
+    .hero-card{ width:100% }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-wrap">
+  <div class="animated-gradient"></div>
+  <div class="lines" aria-hidden="true"></div>
+</div>
+
+<header>
+  <div class="brand">
+    <div class="logo"><img src="images/ec8c03a0-5a06-443b-bacd-ecc3d428c586 (1).png" alt=""  style='width:52px;height:52px;'></div>
+    <div>
+      <div style="font-weight:800;color:#eaf6ff">Kaiven</div>
+      <div style="font-size:12px;color:var(--muted)">Streamer • Automobile • Football • Shoot</div>
+    </div>
+  </div>
+  <nav aria-label="Navigation principale">
+    <ul>
+      <li><a href="#home" class="nav-link active">Accueil</a></li>
+      <li><a href="#about" class="nav-link">À propos</a></li>
+      <li><a href="#games" class="nav-link">Jeux</a></li>
+      <li><a href="#setup" class="nav-link">Setup</a></li>
+      <li><a href="#sponsors" class="nav-link">Sponsors</a></li>
+      <li><a href="#contact" class="nav-link">Contact</a></li>
+    </ul>
+  </nav>
+  <a class="cta" href="https://twitch.tv/Kaiven_off" target="_blank" rel="noopener noreferrer">LIVE ⟶ Kaiven_off</a>
+</header>
+
+<main>
+
+  <!-- HERO -->
+  <section id="home" class="hero">
+    <div class="hero-left">
+      <div class="title">Kaiven_off — Stream & communautaire</div>
+      <div class="subtitle">On joue à l'automobile, au football, et au shoot. Retrouve les lives, le setup et les sponsors — tout au même endroit.</div>
+      <div class="hero-actions">
+        <a class="btn primary" href="#games">Voir les jeux</a>
+        <a class="btn" href="#setup">Mon setup</a>
+        <a class="btn" href="https://twitch.tv/Kaiven_off" target="_blank">Me rejoindre sur Twitch</a>
+      </div>
+      <div style="margin-top:16px;color:var(--muted)"><strong>Slogan :</strong> Let's vibe and game together!</div>
+    </div>
+    <aside class="hero-card">
+      <div class="now-live">
+        <div style="flex:1">
+          <div style="font-size:0.9rem;color:var(--muted)">Actuellement</div>
+          <div style="display:flex; align-items:center; gap:8px; margin-top:6px">
+            <div class="live-dot"></div>
+            <div style="font-weight:800">En direct sur Twitch</div>
+          </div>
+          <div style="margin-top:10px;color:var(--muted); font-size:0.95rem">Chaîne : <strong>Kaiven_off</strong></div>
+        </div>
+      </div>
+      <div style="margin-top:auto;font-size:0.9rem;color:var(--muted)">
+        Prochain stream : consulte le calendrier sur ta chaîne Twitch.
+      </div>
+    </aside>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="section-title">À propos</div>
+    <div class="cards">
+      <div class="card"><h3>Qui suis-je ?</h3><p>Salut, je suis <strong>Kaiven_off</strong>. Je stream principalement des jeux automobiles, du football et des shooters. Mon but : construire une communauté chill, compétitive et fun.</p></div>
+      <div class="card"><h3>Style de stream</h3><p>Gameplay commenté, sessions compétitives, défis avec la communauté, et sessions chill. Interaction active avec le chat et clips best-of.</p></div>
+      <div class="card"><h3>Contact pro</h3><p>Pour partenariats ou demandes médias, utilise la section Contact en bas.</p></div>
+    </div>
+  </section>
+
+  <!-- GAMES -->
+  <section id="games">
+    <div class="section-title">Jeux streamés</div>
+    <div class="cards">
+      <div class="card game-badge">
+        <img src='images/f1-24-jeu-jaquette.jpg' alt='F1' style='width:96px;height:96px;'>
+        <div class="game-icon">F1</div>
+        <div><h3>F1 (Sim/Racing)</h3><p>Sessions de circuit, setups, conseils pour les qualifications et le championnat.</p></div>
+      </div>
+      <div class="card game-badge">
+        <img src='images/forza-horizon-5-jaquette.jpg' alt='FH5' style='width:96px;height:96px;'>
+        <div class="game-icon">FH5</div>
+        <div><h3>Forza Horizon 5</h3><p>Exploration, défis communautaires et courses libres au Mexique.</p></div>
+      </div>
+      <div class="card game-badge">
+       <img src='images/fortnite-jaquette-59ad048f052ff.jpg' alt='FN' style='width:96px;height:96px;'>
+        <div class="game-icon">FN</div>
+        <div><h3>Fortnite</h3><p>Builds, duos/solo, et sessions créatives avec la communauté.</p></div>
+      </div>
+      <div class="card game-badge">
+        <img src='images/jaquette-jeu-vidéo-FC-24-erling-haaland-ea-sports-.png' alt='FC' style='width:96px;height:96px;'>
+        <div class="game-icon">eFC26</div>
+        <div><h3>e-sport FC 26</h3><p>Matchs compétitifs, tournois et défis football avec abonnés.</p></div>
+      </div>
+      <div class="card game-badge">
+        <img src='images/the crew.jpeg' alt='TCM' style='width:96px;height:96px;'>
+        <div class="game-icon">TCM</div>
+        <div><h3>The Crew Motorfest</h3><p>Événements auto, courses en open world et custom rides.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SETUP -->
+  <section id="setup">
+    <div class="section-title">Mon setup</div>
+    <div class="cards setup-list">
+      <div class="card"><h3>PC / Console</h3><p>PC gamer (GPU : 1060 ), PS5.</p></div>
+      <div class="card"><h3>Périphériques</h3><p> manette PS5 , micro, souris pro wirless, clavier G915 tkl et casque G733 logitech, boitier d'acquisition Elgato HD60X. </p></div>
+      <div class="card"><h3>Streaming</h3><p>Meld Studio, scènes pour interactivité, alertes Twitch personnalisées.</p></div>
+    </div>
+  </section>
+
+  <!-- SPONSORS -->
+  <section id="sponsors">
+    <div class="section-title">Sponsors</div>
+    <div class="sponsors">
+      <div class="sponsor">
+        <!-- Remplace par le logo sponsor : <img src='path_to_sponsorA_logo.png' alt='SponsorA'> -->
+        <a href="https://sponsorA.com" target="_blank" rel="noopener noreferrer">SponsorA</a>
+      </div>
+      <div class="sponsor">
+        <!-- Remplace par le logo sponsor : <img src='path_to_sponsorB_logo.png' alt='SponsorB'> -->
+        <a href="https://sponsorB.com" target="_blank" rel="noopener noreferrer">SponsorB</a>
+      </div>
+      <div class="sponsor">
+        <!-- Remplace par le logo sponsor : <img src='path_to_sponsorC_logo.png' alt='SponsorC'> -->
+        <a href="https://sponsorC.com" target="_blank" rel="noopener noreferrer">SponsorC</a>
+      </div>
+      <div class="sponsor">
+        <!-- Remplace par le logo sponsor : <img src='path_to_supporter1_logo.png' alt='Supporter1'> -->
+        <a href="https://supporter1.com" target="_blank" rel="noopener noreferrer">Supporter 1</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="section-title">Contact & Liens</div>
+    <div class="cards">
+      <div class="card">
+        <h3>Retrouve-moi</h3>
+        <p>
+          Twitch : <a href="https://twitch.tv/Kaiven_off" target="_blank" rel="noopener noreferrer">twitch.tv/Kaiven_off</a><br>
+          Youtube : <a href="https://www.youtube.com/@Kaiven_0612" target="_blank" rel="noopener noreferrer">https://www.youtube.com/@Kaiven_0612</a><br>
+          Tiktok : <a href="https://www.tiktok.com/@louis.bnst27" target="_blank" rel="noopener noreferrer">https://www.tiktok.com/@louis.bnst27</a><br>
+          Instagram : <a href="https://www.instagram.com/its_kaiven_/" target="_blank" rel="noopener noreferrer">https://www.instagram.com/its_kaiven_/</a><br>
+          Serveur Discord : <a href="https://discord.gg/3YJ6mbrxjd" target="_blank" rel="noopener noreferrer">https://discord.gg/3YJ6mbrxjd</a><br>
+        </p>
+      </div>
+      <div class="card">
+        <h3>Propositions</h3>
+        <p>Tu veux sponsoriser ou collaborer ? Envoie un message via mon mail pro :
+           Boite mail :</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;">
+    <div>© <strong>Kaiven_off</strong> — Stream & communauté</div>
+    <div style="color:var(--muted)">Made with Kaiven 💙</div>
+  </div>
+</footer>
+
+<script>
+  // Smooth scroll
+  document.querySelectorAll('a[href^="#"]').forEach(a=>{
+    a.addEventListener('click', function(e){
+      const target = document.querySelector(this.getAttribute('href'));
+      if(target){
+        e.preventDefault();
+        const offset = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--nav-height')) || 72;
+        const top = target.getBoundingClientRect().top + window.scrollY - offset + 10;
+        window.scrollTo({top, behavior:'smooth'});
+      }
+    });
+  });
+
+  // Scroll spy
+  const navLinks = document.querySelectorAll('.nav-link');
+  const sections = Array.from(navLinks).map(l => document.querySelector(l.getAttribute('href')));
+  function onScroll(){
+    const scrollPos = window.scrollY + (window.innerHeight * 0.18);
+    let currentIndex = 0;
+    sections.forEach((sec, idx)=>{if(sec && sec.offsetTop <= scrollPos) currentIndex=idx;});
+    navLinks.forEach((l,i)=>l.classList.toggle('active', i===currentIndex));
+  }
+  window.addEventListener('scroll', onScroll);
+  window.addEventListener('load', onScroll);
+</script>
+
+</body>
+</html>
